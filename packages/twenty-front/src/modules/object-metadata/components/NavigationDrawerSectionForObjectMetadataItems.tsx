@@ -3,10 +3,14 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useIcons } from 'twenty-ui/display';
 
 const ORDERED_STANDARD_OBJECTS = [
   'person',
@@ -70,6 +74,9 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
           objectMetadataItem.id,
         ).canReadObjectRecords,
     );
+  const { getIcon } = useIcons();
+  const currentPath = useLocation().pathname;
+  const isActive = currentPath === '/object/workspace-data';
 
   return (
     objectMetadataItems.length > 0 && (
@@ -80,13 +87,25 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             onClick={() => toggleNavigationSection()}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
+        <NavigationDrawerItemsCollapsableContainer isGroup={false}>
+          <NavigationDrawerItem
+            key={'teste'}
+            label={'Dados do Workspace'}
+            to={'/object/workspace-data'}
+            Icon={getIcon('IconUser')}
+            active={isActive}
+          />
+        </NavigationDrawerItemsCollapsableContainer>
+
         {isNavigationSectionOpen &&
           objectMetadataItemsForNavigationItemsWithReadPermission.map(
             (objectMetadataItem) => (
-              <NavigationDrawerItemForObjectMetadataItem
-                key={`navigation-drawer-item-${objectMetadataItem.id}`}
-                objectMetadataItem={objectMetadataItem}
-              />
+              <div>
+                <NavigationDrawerItemForObjectMetadataItem
+                  key={`navigation-drawer-item-${objectMetadataItem.id}`}
+                  objectMetadataItem={objectMetadataItem}
+                />
+              </div>
             ),
           )}
       </NavigationDrawerSection>
